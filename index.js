@@ -3,6 +3,7 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const http = require("http");
+const https = require("https");
 
 const connect = require("./db/conn");
 
@@ -13,7 +14,13 @@ const admin = require("./Routes/Admin/admin");
 const Message = require("./model/messageSchema");
 const GroupChat = require("./model/groupSchema");
 
-const server = http.createServer(app);
+// Load SSL certificate and private key
+const options = {
+  key: fs.readFileSync("/etc/letsencrypt/live/trubuddies.com/privkey.pem"),
+  cert: fs.readFileSync("/etc/letsencrypt/live/trubuddies.com/fullchain.pem"),
+};
+
+const server = https.createServer(options, app);
 const io = require("socket.io")(server, {
   cors: {
     origin: "*",
