@@ -16,8 +16,8 @@ const Message = require("./model/messageSchema");
 const GroupChat = require("./model/groupSchema");
 
 const options = {
-  key: fs.readFileSync("/etc/letsencrypt/live/trubuddies.com/privkey.pem"),
-  cert: fs.readFileSync("/etc/letsencrypt/live/trubuddies.com/fullchain.pem"),
+  key: fs.readFileSync("/home/ubuntu/ssl/privkey1.pem"),
+  cert: fs.readFileSync("/home/ubuntu/ssl/fullchain1.pem"),
 };
 
 const server = https.createServer(options, app);
