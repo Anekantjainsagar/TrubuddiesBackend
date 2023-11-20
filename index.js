@@ -21,8 +21,9 @@ const options = {
   cert: fs.readFileSync("/etc/letsencrypt/live/trubuddies.com/fullchain.pem"),
 };
 
-const server = https.createServer(options, app);
-const io = require("socket.io")(server, {
+const httpServer = http.createServer(app);
+const httpsServer = https.createServer(options, app);
+const io = require("socket.io")(httpsServer, {
   cors: {
     origin: "*",
   },
@@ -87,6 +88,19 @@ app.use("/api/login", login);
 app.use("/api/chat", chat);
 app.use("/api/admin", admin);
 
-server.listen(process.env.PORT, () => {
-  console.log(`The Combined Server running at port ${process.env.PORT}`);
+// server.listen(process.env.PORT, () => {
+//   console.log(`The Combined Server running at port ${process.env.PORT}`);
+// });
+
+// Redirect HTTP traffic to HTTPS
+httpServer.get("*", (req, res) => {
+  res.redirect("https://" + req.headers.host + req.url);
+});
+
+httpServer.listen(80, () => {
+  console.log(`HTTP server running on port 80`);
+});
+
+httpsServer.listen(process.env.PORT || 443, () => {
+  console.log(`HTTPS server running at port ${process.env.PORT || 443}`);
 });
