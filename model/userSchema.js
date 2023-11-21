@@ -29,6 +29,7 @@ const userSchema = new mongoose.Schema({
   languages: Array,
   discussions: Array,
   trubuddies: Array,
+  anonymous: String,
 });
 
 const User = mongoose.model("Users", userSchema);

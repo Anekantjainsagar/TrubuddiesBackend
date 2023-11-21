@@ -91,6 +91,7 @@ exports.updateUser = async (req, res) => {
     profile,
     languages,
     discussions,
+    anonymous,
   } = req.body;
 
   let response = await Login.updateOne(
@@ -104,6 +105,7 @@ exports.updateUser = async (req, res) => {
       profile,
       languages,
       discussions,
+      anonymous,
     }
   );
 
