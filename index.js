@@ -39,9 +39,9 @@ app.get("/", (req, res) => {
 io.on("connection", (socket) => {
   // console.log(`Connected`);
 
-  socket.on("chat", async ({ from, id, message }) => {
+  socket.on("chat", async ({ from, id, message, profile }) => {
     try {
-      let chat = { sender: from, message };
+      let chat = { sender: from, message, profile };
       let response = await GroupChat.updateOne(
         { _id: id },
         { $push: { chats: chat } }

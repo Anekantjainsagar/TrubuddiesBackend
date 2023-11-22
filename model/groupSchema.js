@@ -5,6 +5,7 @@ const groupSchema = new mongoose.Schema({
   profile: String,
   chats: [
     {
+      profile: String,
       sender: {
         type: mongoose.Types.ObjectId,
         require: true,
