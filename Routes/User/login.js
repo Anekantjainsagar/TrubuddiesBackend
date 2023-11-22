@@ -46,6 +46,19 @@ login.post(
   resetPassword
 );
 
+login.get("/get-profile/:id", async (req, res) => {
+  const { id } = req.params;
+
+  let data = await Trubuddy.getElementById(id);
+
+  if (data) {
+    res.status(200).send(data);
+  } else {
+    data = await User.getElementById(id);
+    res.status(200).send(data);
+  }
+});
+
 login.post("/get-one/:id", validateSingin, async (req, res) => {
   const { id } = req.params;
 
