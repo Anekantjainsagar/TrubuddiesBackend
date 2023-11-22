@@ -49,12 +49,12 @@ login.post(
 login.get("/get-profile/:id", async (req, res) => {
   const { id } = req.params;
 
-  let data = await Trubuddy.getElementById(id);
+  let data = await Trubuddy.findOne({ _id: id });
 
   if (data) {
     res.status(200).send(data);
   } else {
-    data = await User.getElementById(id);
+    data = await User.findOne({ _id: id });
     res.status(200).send(data);
   }
 });
