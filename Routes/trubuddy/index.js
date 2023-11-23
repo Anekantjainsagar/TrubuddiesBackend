@@ -11,7 +11,7 @@ trubuddy.post("/create", async (req, res) => {
   let { name, email, phone, password } = req.body;
   email = email.toLowerCase();
 
-  const data = await Trubuddy.findOne({ $or: [{ email }, { phone }] });
+  const data = await Trubuddy.findOne({ email });
 
   if (data) {
     res
