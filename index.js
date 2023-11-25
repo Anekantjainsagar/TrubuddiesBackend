@@ -9,6 +9,7 @@ const fs = require("fs");
 const connect = require("./db/conn");
 
 const login = require("./Routes/User/login");
+const support = require("./Routes/User/support");
 const trubuddy = require("./Routes/trubuddy");
 const chat = require("./Routes/Chat/chat");
 const admin = require("./Routes/Admin/admin");
@@ -83,6 +84,7 @@ io.on("connection", (socket) => {
 
 app.use("/api/trubuddy", trubuddy);
 app.use("/api/login", login);
+app.use("/api/support", support);
 app.use("/api/chat", chat);
 app.use("/api/admin", admin);
 
