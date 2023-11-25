@@ -109,6 +109,7 @@ trubuddy.post("/update", validateSingin, async (req, res) => {
       otherExpertise,
       languages,
       bio,
+      anonymous,
     } = req.body;
 
     let response = await Trubuddy.updateOne(
@@ -123,6 +124,7 @@ trubuddy.post("/update", validateSingin, async (req, res) => {
         profile,
         otherExpertise,
         languages,
+        anonymous,
       }
     );
     res.status(200).send(response);
