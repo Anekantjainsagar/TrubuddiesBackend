@@ -25,6 +25,7 @@ const trubuddySchema = new mongoose.Schema({
   state: String,
   expertise: String,
   otherExpertise: Array,
+  personality: Array,
   languages: Array,
   availability: String,
   anonymous: String,

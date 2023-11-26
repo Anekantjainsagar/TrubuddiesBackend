@@ -107,6 +107,7 @@ trubuddy.post("/update", validateSingin, async (req, res) => {
       gender,
       profile,
       otherExpertise,
+      personality,
       languages,
       bio,
       anonymous,
@@ -125,6 +126,7 @@ trubuddy.post("/update", validateSingin, async (req, res) => {
         otherExpertise,
         languages,
         anonymous,
+        personality,
       }
     );
     res.status(200).send(response);
