@@ -79,9 +79,7 @@ io.on("connection", (socket) => {
 
         await transporter.sendMail({
           to: trubuddy?.email,
-          subject: `New Message From ${
-            user?.anonymous ? user?.anonymous : user?.name
-          }`,
+          subject: `A BUDDY IS WAITING FOR YOU`,
           html: `<p>Hello ${
             trubuddy?.anonymous ? trubuddy?.anonymous : trubuddy?.name
           },</p> <p>You got a new message from a User please login to your TruBuddies Dashboard to check the message.</p> <p>Regards,</p> <p>Team TruBuddies</p>`,
