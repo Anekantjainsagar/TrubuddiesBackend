@@ -59,6 +59,11 @@ trubuddy.post("/login", async (req, res) => {
   }
 });
 
+trubuddy.get("/get/:id", async (req, res) => {
+  const user = await Trubuddy.getElementById(req.params.id);
+  res.send(user);
+});
+
 trubuddy.post("/get", validateSingin, async (req, res) => {
   const { id } = req;
 
