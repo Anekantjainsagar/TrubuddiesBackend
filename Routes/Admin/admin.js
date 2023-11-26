@@ -57,7 +57,7 @@ admin.post("/get-trubuddies", async (req, res) => {
   }
 
   let users = await Trubuddy.find({
-    name: { $regex: new RegExp(search, "i") },
+    anonymous: { $regex: new RegExp(search, "i") },
   });
 
   res.status(200).send(users);
