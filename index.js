@@ -15,6 +15,9 @@ const chat = require("./Routes/Chat/chat");
 const admin = require("./Routes/Admin/admin");
 const Message = require("./model/messageSchema");
 const GroupChat = require("./model/groupSchema");
+const Trubuddy = require("./model/trubuddySchema");
+const User = require("./model/userSchema");
+const nodemailer = require("nodemailer");
 
 const options = {
   key: fs.readFileSync("/home/ubuntu/ssl/privkey1.pem"),
@@ -62,6 +65,29 @@ io.on("connection", (socket) => {
   socket.on("message", async ({ from, to, message }) => {
     try {
       let saveMessage = new Message({ sender: from, receiver: to, message });
+      let user = await User.findOne({ _id: from });
+      let trubuddy = await Trubuddy.findOne({ _id: to });
+
+      if (trubuddy?.status == "Offline") {
+        const transporter = nodemailer.createTransport({
+          service: "gmail",
+          auth: {
+            user: process.env.EMAIL,
+            pass: process.env.PASSWORD,
+          },
+        });
+
+        await transporter.sendMail({
+          to: trubuddy?.email,
+          subject: `New Message From ${
+            user?.anonymous ? user?.anonymous : user?.name
+          }`,
+          html: `<p>Hello ${
+            trubuddy?.anonymous ? trubuddy?.anonymous : trubuddy?.name
+          },</p> <p>You got a new message from a User please login to your TruBuddies Dashboard to check the message.</p> <p>Regards,</p> <p>Team TruBuddies</p>`,
+        });
+      }
+
       await saveMessage
         .save()
         .then((res) => {
