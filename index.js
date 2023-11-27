@@ -67,6 +67,16 @@ io.on("connection", (socket) => {
   socket.on("message", async ({ from, to, message }) => {
     try {
       let saveMessage = new Message({ sender: from, receiver: to, message });
+      io.local.emit("message", saveMessage);
+      await saveMessage
+        .save()
+        .then((res) => {
+          console.log("Saved");
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+      saveMessage = {};
       let trubuddy = await Trubuddy.findOne({ _id: to });
 
       if (trubuddy && trubuddy?.status == "Offline") {
@@ -86,16 +96,6 @@ io.on("connection", (socket) => {
           },</p> <p>You got a new message from a User please login to your TruBuddies Dashboard to check the message.</p> <p>Regards,</p> <p>Team TruBuddies</p>`,
         });
       }
-      io.local.emit("message", saveMessage);
-      await saveMessage
-        .save()
-        .then((res) => {
-          console.log("Saved");
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-      saveMessage = {};
     } catch (errors) {
       console.log(errors);
     }
