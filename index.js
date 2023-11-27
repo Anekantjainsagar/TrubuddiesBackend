@@ -62,13 +62,14 @@ io.on("connection", (socket) => {
     socket.join(userId);
   });
 
+  // socket.on("admin-message", async ({ from, to, message }) => {});
+
   socket.on("message", async ({ from, to, message }) => {
     try {
       let saveMessage = new Message({ sender: from, receiver: to, message });
-      let user = await User.findOne({ _id: from });
       let trubuddy = await Trubuddy.findOne({ _id: to });
 
-      if (trubuddy?.status == "Offline") {
+      if (trubuddy && trubuddy?.status == "Offline") {
         const transporter = nodemailer.createTransport({
           service: "gmail",
           auth: {
@@ -85,7 +86,7 @@ io.on("connection", (socket) => {
           },</p> <p>You got a new message from a User please login to your TruBuddies Dashboard to check the message.</p> <p>Regards,</p> <p>Team TruBuddies</p>`,
         });
       }
-
+      io.local.emit("message", saveMessage);
       await saveMessage
         .save()
         .then((res) => {
@@ -94,7 +95,6 @@ io.on("connection", (socket) => {
         .catch((err) => {
           console.log(err);
         });
-      io.local.emit("message", saveMessage);
       saveMessage = {};
     } catch (errors) {
       console.log(errors);
