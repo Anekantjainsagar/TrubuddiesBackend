@@ -68,14 +68,8 @@ io.on("connection", (socket) => {
     try {
       let saveMessage = new Message({ sender: from, receiver: to, message });
       io.local.emit("message", saveMessage);
-      await saveMessage
-        .save()
-        .then((res) => {
-          console.log("Saved");
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      await saveMessage.save();
+      console.log("Saved");
       saveMessage = {};
       let trubuddy = await Trubuddy.findOne({ _id: to });
 
