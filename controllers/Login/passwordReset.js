@@ -1,6 +1,6 @@
 const nodemailer = require("nodemailer");
 const jwt = require("jsonwebtoken");
-const Login = require("../../model/userSchema");
+const User = require("../../model/userSchema");
 const bcrypt = require("bcryptjs");
 
 exports.sendUrl = async (req, res) => {
@@ -15,7 +15,7 @@ exports.sendUrl = async (req, res) => {
     },
   });
 
-  let data = await Login.findOne({ email: modifiedMail });
+  let data = await User.findOne({ email: modifiedMail });
   if (data) {
     const jwtToken = jwt.sign(
       {
@@ -26,7 +26,7 @@ exports.sendUrl = async (req, res) => {
         expiresIn: "1hr",
       }
     );
-    const uri = `${process.env.BASE_URL}/password-reset/${data._id}/${jwtToken}`;
+    const uri = `${process.env.BASE_URL}/user/password-reset/${data._id}/${jwtToken}`;
 
     const result = await transporter.sendMail({
       to: email,
@@ -65,11 +65,11 @@ exports.resetPassword = async (req, res) => {
   const { id, token } = req.params;
   const { password } = req.body;
 
-  const data = await Login.findById(id);
+  const data = await User.findOne({ _id: id });
   if (data) {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
-    const response = await Login.updateOne(
+    const response = await User.updateOne(
       { _id: id },
       { password: hashedPassword }
     );
