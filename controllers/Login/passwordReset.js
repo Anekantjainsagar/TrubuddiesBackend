@@ -5,7 +5,7 @@ const bcrypt = require("bcryptjs");
 
 exports.sendUrl = async (req, res) => {
   const email = req.body.email;
-  const modifiedMail = email.toLowerCase();
+  const modifiedMail = email?.toLowerCase();
 
   const transporter = nodemailer.createTransport({
     service: "gmail",
