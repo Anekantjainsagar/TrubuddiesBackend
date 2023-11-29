@@ -120,6 +120,11 @@ io.on("connection", (socket) => {
     }
   });
 
+  socket.on("typing", async () => {
+    if (data.typing == true) io.emit("typing", data);
+    else io.emit("typing", data);
+  });
+
   socket.on("disconnect", () => {
     // console.log(`Disconnected`);
   });
