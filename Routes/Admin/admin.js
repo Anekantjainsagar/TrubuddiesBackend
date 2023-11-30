@@ -6,6 +6,7 @@ const Trubuddy = require("../../model/trubuddySchema");
 const Team = require("../../model/teamSchema");
 const Message = require("../../model/messageSchema");
 const Admin = require("../../model/adminSchema");
+const Social = require("../../model/socialSchema");
 
 const { validateSingin } = require("../../middlewares/auth");
 const jwt = require("jsonwebtoken");
@@ -74,6 +75,25 @@ admin.get("/get-teams", async (req, res) => {
     name: { $regex: new RegExp(search, "i") },
   });
   res.status(200).send(users);
+});
+
+admin.post("/add-social-media", async (req, res) => {
+  const { id, facebook, instagram, whatsapp, linkedin, telegram } = req.body;
+
+  const response = await Social.updateOne(
+    { _id: id },
+    { facebook, instagram, whatsapp, linkedin, telegram }
+  );
+
+  res.status(200).send(response);
+});
+
+admin.post("/get-social/:id", async (req, res) => {
+  const { id } = req.params;
+
+  const response = await Social.findOne({ _id: id });
+
+  res.status(200).send(response);
 });
 
 module.exports = admin;
