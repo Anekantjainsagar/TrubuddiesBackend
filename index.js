@@ -50,7 +50,7 @@ passport.use(
     {
       clientID: process.env.CLIENT_ID,
       clientSecret: process.env.CLIENT_SECRET_ID,
-      callbackURL: "https://trubuddies.com/auth/google/callback",
+      callbackURL: "https://trubuddies.com:5000/auth/google/callback",
       proxy: true, // Add this line
     },
     async (accessToken, refreshToken, profile, done) => {
@@ -103,6 +103,7 @@ app.get("/", (req, res) => {
   res.json({ user: req.user });
 });
 
+// Express middleware
 app.use(
   session({
     secret: process.env.SECRET_KEY,
@@ -112,7 +113,6 @@ app.use(
 );
 app.use(passport.initialize());
 app.use(passport.session());
-
 
 app.get("/", (req, res) => {
   res.send("Hello world");
