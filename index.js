@@ -23,6 +23,23 @@ const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const session = require("express-session");
 
+const options = {
+  key: fs.readFileSync("/home/ubuntu/ssl/privkey1.pem"),
+  cert: fs.readFileSync("/home/ubuntu/ssl/fullchain1.pem"),
+};
+
+const server = https.createServer(options, app);
+const io = require("socket.io")(server, {
+  cors: {
+    origin: "*",
+  },
+});
+
+app.use(cors());
+app.use(express.json());
+
+connect();
+
 passport.use(
   new GoogleStrategy(
     {
@@ -90,23 +107,6 @@ app.use(
 );
 app.use(passport.initialize());
 app.use(passport.session());
-
-const options = {
-  key: fs.readFileSync("/home/ubuntu/ssl/privkey1.pem"),
-  cert: fs.readFileSync("/home/ubuntu/ssl/fullchain1.pem"),
-};
-
-const server = https.createServer(options, app);
-const io = require("socket.io")(server, {
-  cors: {
-    origin: "*",
-  },
-});
-
-app.use(cors());
-app.use(express.json());
-
-connect();
 
 app.get("/", (req, res) => {
   res.send("Hello world");
