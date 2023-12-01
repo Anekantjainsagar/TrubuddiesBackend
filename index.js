@@ -50,7 +50,8 @@ passport.use(
     {
       clientID: process.env.CLIENT_ID,
       clientSecret: process.env.CLIENT_SECRET_ID,
-      callbackURL: "https://trubuddies.com/",
+      callbackURL: "https://trubuddies.com/auth/google/callback",
+      proxy: true, // Add this line
     },
     async (accessToken, refreshToken, profile, done) => {
       // Check if the user already exists in the database
