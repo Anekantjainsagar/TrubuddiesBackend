@@ -35,12 +35,7 @@ const io = require("socket.io")(server, {
   },
 });
 
-app.use(
-  cors({
-    origin: "https://trubuddies.com",
-  })
-);
-
+app.use(cors());
 app.use(express.json());
 
 connect();
