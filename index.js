@@ -19,6 +19,78 @@ const Trubuddy = require("./model/trubuddySchema");
 const User = require("./model/userSchema");
 const nodemailer = require("nodemailer");
 
+const passport = require("passport");
+const GoogleStrategy = require("passport-google-oauth20").Strategy;
+const session = require("express-session");
+
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID: process.env.CLIENT_ID,
+      clientSecret: process.env.CLIENT_SECRET_ID,
+      callbackURL: "https://trubuddies.com/auth/google/callback",
+    },
+    async (accessToken, refreshToken, profile, done) => {
+      // Check if the user already exists in the database
+      const existingUser = await User.findOne({ googleId: profile.id });
+
+      if (existingUser) {
+        return done(null, existingUser);
+      }
+
+      // Save the user to the database
+      const user = await new User({
+        googleId: profile.id,
+        name: profile.displayName,
+        email: profile.emails[0].value,
+      }).save();
+
+      return done(null, user);
+    }
+  )
+);
+
+passport.serializeUser((user, done) => {
+  done(null, user);
+});
+
+passport.deserializeUser((user, done) => {
+  done(null, user);
+});
+
+app.get(
+  "/auth/google",
+  passport.authenticate("google", { scope: ["profile", "email"] })
+);
+
+app.get(
+  "/auth/google/callback",
+  passport.authenticate("google", { failureRedirect: "/" }),
+  (req, res) => {
+    res.redirect("/");
+  }
+);
+
+app.get("/logout", (req, res) => {
+  req.logout();
+  res.redirect("/");
+});
+
+app.get("/", (req, res) => {
+  res.json({ user: req.user });
+});
+
+// Express middleware
+app.use(
+  session({
+    secret: process.env.SECRET_KEY,
+    resave: true,
+    saveUninitialized: true,
+  })
+);
+app.use(passport.initialize());
+app.use(passport.session());
+
 const options = {
   key: fs.readFileSync("/home/ubuntu/ssl/privkey1.pem"),
   cert: fs.readFileSync("/home/ubuntu/ssl/fullchain1.pem"),

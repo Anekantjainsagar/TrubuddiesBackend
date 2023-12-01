@@ -106,7 +106,7 @@ admin.post("/add-faq", async (req, res) => {
   });
 });
 
-admin.get("/get-faq/:question", async (req, res) => {
+admin.post("/get-faq/:question", async (req, res) => {
   const { question } = req.params;
 
   const response = await Faq.find({
