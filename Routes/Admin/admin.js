@@ -7,6 +7,7 @@ const Team = require("../../model/teamSchema");
 const Message = require("../../model/messageSchema");
 const Admin = require("../../model/adminSchema");
 const Social = require("../../model/socialSchema");
+const Faq = require("../../model/faqSchema");
 
 const { validateSingin } = require("../../middlewares/auth");
 const jwt = require("jsonwebtoken");
@@ -94,6 +95,24 @@ admin.post("/get-social/:id", async (req, res) => {
   const response = await Social.findOne({ _id: id });
 
   res.status(200).send(response);
+});
+
+admin.post("/add-faq", async (req, res) => {
+  const { question, answer } = req.body;
+
+  const obj = Faq({ question, answer });
+  obj.save().then((response) => {
+    res.send(response);
+  });
+});
+
+admin.get("/get-faq/:question", async (req, res) => {
+  const { question } = req.params;
+
+  const response = await Faq.find({
+    question: { $regex: new RegExp(question, "i") },
+  });
+  res.send(response);
 });
 
 module.exports = admin;
