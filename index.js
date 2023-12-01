@@ -37,9 +37,11 @@ const io = require("socket.io")(server, {
 
 app.use(
   cors({
-    origin: "https://trubuddies.com",
+    origin: ["https://trubuddies.com", "http://trubuddies.com:5000"],
+    credentials: true,
   })
 );
+
 
 app.use(express.json());
 
@@ -103,7 +105,6 @@ app.get("/", (req, res) => {
   res.json({ user: req.user });
 });
 
-// Express middleware
 app.use(
   session({
     secret: process.env.SECRET_KEY,
@@ -113,6 +114,7 @@ app.use(
 );
 app.use(passport.initialize());
 app.use(passport.session());
+
 
 app.get("/", (req, res) => {
   res.send("Hello world");
