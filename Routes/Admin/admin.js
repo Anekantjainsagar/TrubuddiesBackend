@@ -49,8 +49,8 @@ admin.post("/add-faq", async (req, res) => {
   });
 });
 
-admin.get("/get-faqs/:question", async (req, res) => {
-  const { question } = req.params;
+admin.post("/get-faqs", async (req, res) => {
+  const { question } = req.body;
 
   const response = await Faq.find({
     question: { $regex: new RegExp(question, "i") },
