@@ -35,7 +35,13 @@ const io = require("socket.io")(server, {
   },
 });
 
-app.use(cors());
+app.use(
+  cors({
+    origin: ["http://localhost:3000", "https://trubuddies.com"], // Update with the actual origin of your frontend
+    credentials: true,
+  })
+);
+
 app.use(express.json());
 
 connect();
@@ -78,11 +84,13 @@ passport.deserializeUser((user, done) => {
 
 app.get(
   "/auth/google",
+  cors(), // Apply cors middleware to this route
   passport.authenticate("google", { scope: ["profile", "email"] })
 );
 
 app.get(
   "/auth/google/callback",
+  cors(), // Apply cors middleware to this route
   passport.authenticate("google", { failureRedirect: "/" }),
   (req, res) => {
     res.redirect("/");
