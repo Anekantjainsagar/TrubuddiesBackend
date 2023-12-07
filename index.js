@@ -43,8 +43,6 @@ app.use(
 );
 
 app.use(express.json());
-app.use(passport.initialize());
-app.use(passport.session());
 
 connect();
 
@@ -116,6 +114,8 @@ app.use(
     saveUninitialized: true,
   })
 );
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.get("/", (req, res) => {
   res.send("Hello world");
