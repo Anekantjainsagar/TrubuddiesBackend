@@ -39,10 +39,13 @@ app.use(
   cors({
     origin: ["http://localhost:3000", "https://trubuddies.com"], // Update with the actual origin of your frontend
     credentials: true,
+    methods: "GET,POST,PUT,DELETE",
   })
 );
 
 app.use(express.json());
+app.use(passport.initialize());
+app.use(passport.session());
 
 connect();
 
@@ -52,7 +55,7 @@ passport.use(
       clientID: process.env.CLIENT_ID,
       clientSecret: process.env.CLIENT_SECRET_ID,
       callbackURL: "https://trubuddies.com:5000/auth/google/callback",
-      proxy: true, // Add this line
+      scope: ["profile", "email"],
     },
     async (accessToken, refreshToken, profile, done) => {
       // Check if the user already exists in the database
@@ -82,28 +85,38 @@ passport.deserializeUser((user, done) => {
   done(null, user);
 });
 
-app.get(
-  "/auth/google",
-  cors(), // Apply cors middleware to this route
-  passport.authenticate("google", { scope: ["profile", "email"] })
-);
+app.get("/login/success", (req, res) => {
+  if (req.user) {
+    res.status(200).json({
+      error: false,
+      message: "Successfully Loged In",
+      user: req.user,
+    });
+  } else {
+    res.status(403).json({ error: true, message: "Not Authorized" });
+  }
+});
+
+app.get("/login/failed", (req, res) => {
+  res.status(401).json({
+    error: true,
+    message: "Log in failure",
+  });
+});
+
+app.get("/google", passport.authenticate("google", ["profile", "email"]));
 
 app.get(
-  "/auth/google/callback",
-  cors(), // Apply cors middleware to this route
-  passport.authenticate("google", { failureRedirect: "/" }),
-  (req, res) => {
-    res.redirect("/");
-  }
+  "/google/callback",
+  passport.authenticate("google", {
+    successRedirect: process.env.CLIENT_URL,
+    failureRedirect: "/login/failed",
+  })
 );
 
 app.get("/logout", (req, res) => {
   req.logout();
-  res.redirect("/");
-});
-
-app.get("/", (req, res) => {
-  res.json({ user: req.user });
+  res.redirect(process.env.CLIENT_URL);
 });
 
 // Express middleware
@@ -114,8 +127,6 @@ app.use(
     saveUninitialized: true,
   })
 );
-app.use(passport.initialize());
-app.use(passport.session());
 
 app.get("/", (req, res) => {
   res.send("Hello world");
