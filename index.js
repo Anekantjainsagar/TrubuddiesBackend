@@ -39,7 +39,6 @@ app.use(
   cors({
     origin: ["http://localhost:3000", "https://trubuddies.com"], // Update with the actual origin of your frontend
     credentials: true,
-    methods: "GET,POST,PUT,DELETE",
   })
 );
 
@@ -55,7 +54,7 @@ passport.use(
       clientID: process.env.CLIENT_ID,
       clientSecret: process.env.CLIENT_SECRET_ID,
       callbackURL: "https://trubuddies.com:5000/auth/google/callback",
-      scope: ["profile", "email"],
+      proxy: true, // Add this line
     },
     async (accessToken, refreshToken, profile, done) => {
       // Check if the user already exists in the database
@@ -85,38 +84,28 @@ passport.deserializeUser((user, done) => {
   done(null, user);
 });
 
-app.get("/login/success", (req, res) => {
-  if (req.user) {
-    res.status(200).json({
-      error: false,
-      message: "Successfully Loged In",
-      user: req.user,
-    });
-  } else {
-    res.status(403).json({ error: true, message: "Not Authorized" });
-  }
-});
-
-app.get("/login/failed", (req, res) => {
-  res.status(401).json({
-    error: true,
-    message: "Log in failure",
-  });
-});
-
-app.get("/google", passport.authenticate("google", ["profile", "email"]));
+app.get(
+  "/auth/google",
+  cors(), // Apply cors middleware to this route
+  passport.authenticate("google", { scope: ["profile", "email"] })
+);
 
 app.get(
-  "/google/callback",
-  passport.authenticate("google", {
-    successRedirect: process.env.CLIENT_URL,
-    failureRedirect: "/login/failed",
-  })
+  "/auth/google/callback",
+  cors(), // Apply cors middleware to this route
+  passport.authenticate("google", { failureRedirect: "/" }),
+  (req, res) => {
+    res.redirect("/");
+  }
 );
 
 app.get("/logout", (req, res) => {
   req.logout();
-  res.redirect(process.env.CLIENT_URL);
+  res.redirect("/");
+});
+
+app.get("/", (req, res) => {
+  res.json({ user: req.user });
 });
 
 // Express middleware
