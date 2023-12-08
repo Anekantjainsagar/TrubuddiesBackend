@@ -34,6 +34,8 @@ const options = {
 
 const server = https.createServer(options, app);
 const io = require("socket.io")(server, {
+  pingInterval: 10000, // how often to ping/pong.
+  pingTimeout: 30000,
   cors: {
     origin: "*",
   },
