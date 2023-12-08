@@ -19,6 +19,11 @@ const Trubuddy = require("./model/trubuddySchema");
 const User = require("./model/userSchema");
 const nodemailer = require("nodemailer");
 
+const { Queue, Worker } = require("bull");
+
+// Create a Bull queue
+const emailQueue = new Queue("emailQueue");
+
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const session = require("express-session");
@@ -150,50 +155,8 @@ io.on("connection", (socket) => {
       let saveMessage = new Message({ sender: from, receiver: to, message });
       io.local.emit("message", saveMessage);
       await saveMessage.save();
-      // let trubuddy = await Trubuddy.findOne({ _id: to });
 
-      // if (trubuddy && trubuddy?.status == "Offline") {
-      //   const transporter = nodemailer.createTransport({
-      //     service: "gmail",
-      //     auth: {
-      //       user: process.env.EMAIL,
-      //       pass: process.env.PASSWORD,
-      //     },
-      //   });
-
-      //   await transporter.sendMail({
-      //     to: trubuddy?.email,
-      //     subject: `A BUDDY IS WAITING FOR YOU`,
-      //     html: `<p>Hello ${
-      //       trubuddy?.anonymous ? trubuddy?.anonymous : trubuddy?.name
-      //     },</p> <p>You got a new message from a User please login to your TruBuddies Dashboard to check the message.</p> <p>Regards,</p> <p>Team TruBuddies</p>`,
-      //   });
-      // }
-
-      // let user = await User.findOne({ _id: to });
-      // trubuddy = await Trubuddy.findOne({ _id: from });
-
-      // if (user && trubuddy) {
-      //   const transporter = nodemailer.createTransport({
-      //     service: "gmail",
-      //     auth: {
-      //       user: process.env.EMAIL,
-      //       pass: process.env.PASSWORD,
-      //     },
-      //   });
-
-      //   await transporter.sendMail({
-      //     to: user?.email,
-      //     subject: `YOU GOT A NEW MESSAGE FROM ${
-      //       trubuddy?.anonymous
-      //         ? trubuddy?.anonymous?.toUpperCase()
-      //         : trubuddy?.name?.toUpperCase()
-      //     }`,
-      //     html: `<p>Hello ${
-      //       user?.anonymous ? user?.anonymous : user?.name
-      //     },</p> <p>You got a new message from a Trubuddy please login to your User Dashboard to check the message.</p> <p>Regards,</p> <p>Team TruBuddies</p>`,
-      //   });
-      // }
+      await emailQueue.add("sendEmail", { to, from });
     } catch (errors) {
       console.log(errors);
     }
@@ -202,6 +165,64 @@ io.on("connection", (socket) => {
   socket.on("disconnect", () => {
     // console.log(`Disconnected`);
   });
+});
+
+const emailWorker = new Worker("emailQueue", async (job) => {
+  const { to, from } = job.data;
+  let trubuddy = await Trubuddy.findOne({ _id: to });
+
+  if (trubuddy && trubuddy?.status == "Offline") {
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL,
+        pass: process.env.PASSWORD,
+      },
+    });
+
+    await transporter.sendMail({
+      to: trubuddy?.email,
+      subject: `A BUDDY IS WAITING FOR YOU`,
+      html: `<p>Hello ${
+        trubuddy?.anonymous ? trubuddy?.anonymous : trubuddy?.name
+      },</p> <p>You got a new message from a User please login to your TruBuddies Dashboard to check the message.</p> <p>Regards,</p> <p>Team TruBuddies</p>`,
+    });
+  }
+
+  let user = await User.findOne({ _id: to });
+  trubuddy = await Trubuddy.findOne({ _id: from });
+
+  if (user && trubuddy) {
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL,
+        pass: process.env.PASSWORD,
+      },
+    });
+
+    await transporter.sendMail({
+      to: user?.email,
+      subject: `YOU GOT A NEW MESSAGE FROM ${
+        trubuddy?.anonymous
+          ? trubuddy?.anonymous?.toUpperCase()
+          : trubuddy?.name?.toUpperCase()
+      }`,
+      html: `<p>Hello ${
+        user?.anonymous ? user?.anonymous : user?.name
+      },</p> <p>You got a new message from a Trubuddy please login to your User Dashboard to check the message.</p> <p>Regards,</p> <p>Team TruBuddies</p>`,
+    });
+  }
+});
+
+// Start the email worker
+emailWorker.on("completed", (job) => {
+  console.log(`Email task completed for job ${job.id}`);
+});
+
+// Handle errors in the email worker
+emailWorker.on("failed", (job, err) => {
+  console.error(`Email task failed for job ${job.id}: ${err.message}`);
 });
 
 app.use("/api/trubuddy", trubuddy);
