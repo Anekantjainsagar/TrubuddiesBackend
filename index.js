@@ -150,61 +150,53 @@ io.on("connection", (socket) => {
       let saveMessage = new Message({ sender: from, receiver: to, message });
       io.local.emit("message", saveMessage);
       await saveMessage.save();
-      console.log("Saved");
-      saveMessage = {};
-      let trubuddy = await Trubuddy.findOne({ _id: to });
+      // let trubuddy = await Trubuddy.findOne({ _id: to });
 
-      if (trubuddy && trubuddy?.status == "Offline") {
-        const transporter = nodemailer.createTransport({
-          service: "gmail",
-          auth: {
-            user: process.env.EMAIL,
-            pass: process.env.PASSWORD,
-          },
-        });
+      // if (trubuddy && trubuddy?.status == "Offline") {
+      //   const transporter = nodemailer.createTransport({
+      //     service: "gmail",
+      //     auth: {
+      //       user: process.env.EMAIL,
+      //       pass: process.env.PASSWORD,
+      //     },
+      //   });
 
-        await transporter.sendMail({
-          to: trubuddy?.email,
-          subject: `A BUDDY IS WAITING FOR YOU`,
-          html: `<p>Hello ${
-            trubuddy?.anonymous ? trubuddy?.anonymous : trubuddy?.name
-          },</p> <p>You got a new message from a User please login to your TruBuddies Dashboard to check the message.</p> <p>Regards,</p> <p>Team TruBuddies</p>`,
-        });
-      }
+      //   await transporter.sendMail({
+      //     to: trubuddy?.email,
+      //     subject: `A BUDDY IS WAITING FOR YOU`,
+      //     html: `<p>Hello ${
+      //       trubuddy?.anonymous ? trubuddy?.anonymous : trubuddy?.name
+      //     },</p> <p>You got a new message from a User please login to your TruBuddies Dashboard to check the message.</p> <p>Regards,</p> <p>Team TruBuddies</p>`,
+      //   });
+      // }
 
-      let user = await User.findOne({ _id: to });
-      trubuddy = await Trubuddy.findOne({ _id: from });
+      // let user = await User.findOne({ _id: to });
+      // trubuddy = await Trubuddy.findOne({ _id: from });
 
-      if (user && trubuddy) {
-        const transporter = nodemailer.createTransport({
-          service: "gmail",
-          auth: {
-            user: process.env.EMAIL,
-            pass: process.env.PASSWORD,
-          },
-        });
+      // if (user && trubuddy) {
+      //   const transporter = nodemailer.createTransport({
+      //     service: "gmail",
+      //     auth: {
+      //       user: process.env.EMAIL,
+      //       pass: process.env.PASSWORD,
+      //     },
+      //   });
 
-        await transporter.sendMail({
-          to: user?.email,
-          subject: `YOU GOT A NEW MESSAGE FROM ${
-            trubuddy?.anonymous
-              ? trubuddy?.anonymous?.toUpperCase()
-              : trubuddy?.name?.toUpperCase()
-          }`,
-          html: `<p>Hello ${
-            user?.anonymous ? user?.anonymous : user?.name
-          },</p> <p>You got a new message from a Trubuddy please login to your User Dashboard to check the message.</p> <p>Regards,</p> <p>Team TruBuddies</p>`,
-        });
-      }
+      //   await transporter.sendMail({
+      //     to: user?.email,
+      //     subject: `YOU GOT A NEW MESSAGE FROM ${
+      //       trubuddy?.anonymous
+      //         ? trubuddy?.anonymous?.toUpperCase()
+      //         : trubuddy?.name?.toUpperCase()
+      //     }`,
+      //     html: `<p>Hello ${
+      //       user?.anonymous ? user?.anonymous : user?.name
+      //     },</p> <p>You got a new message from a Trubuddy please login to your User Dashboard to check the message.</p> <p>Regards,</p> <p>Team TruBuddies</p>`,
+      //   });
+      // }
     } catch (errors) {
       console.log(errors);
     }
-  });
-
-  socket.on("typing", async ({ user, typing }) => {
-    console.log(user, typing);
-    if (typing == true) io.local.emit("typing", { user, typing });
-    else io.local.emit("typing", { user, typing });
   });
 
   socket.on("disconnect", () => {
