@@ -19,10 +19,11 @@ const Trubuddy = require("./model/trubuddySchema");
 const User = require("./model/userSchema");
 const nodemailer = require("nodemailer");
 
-const { createQueue, Worker } = require("bull");
+const { Worker } = require("bull");
+const Queue = require("bull");
 
 // Create a Bull queue
-const emailQueue = createQueue("emailQueue");
+const emailQueue = new Queue("emailQueue");
 
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
