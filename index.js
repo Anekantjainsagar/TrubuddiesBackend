@@ -19,9 +19,7 @@ const Trubuddy = require("./model/trubuddySchema");
 const User = require("./model/userSchema");
 const nodemailer = require("nodemailer");
 
-const { Worker } = require("bull");
 const Queue = require("bull");
-
 // Create a Bull queue
 const emailQueue = new Queue("emailQueue");
 
@@ -168,7 +166,7 @@ io.on("connection", (socket) => {
   });
 });
 
-const emailWorker = new Worker("emailQueue", async (job) => {
+emailQueue.process("emailQueue", async (job) => {
   const { to, from } = job.data;
   let trubuddy = await Trubuddy.findOne({ _id: to });
 
@@ -214,16 +212,6 @@ const emailWorker = new Worker("emailQueue", async (job) => {
       },</p> <p>You got a new message from a Trubuddy please login to your User Dashboard to check the message.</p> <p>Regards,</p> <p>Team TruBuddies</p>`,
     });
   }
-});
-
-// Start the email worker
-emailWorker.on("completed", (job) => {
-  console.log(`Email task completed for job ${job.id}`);
-});
-
-// Handle errors in the email worker
-emailWorker.on("failed", (job, err) => {
-  console.error(`Email task failed for job ${job.id}: ${err.message}`);
 });
 
 app.use("/api/trubuddy", trubuddy);
