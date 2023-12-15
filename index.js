@@ -142,12 +142,13 @@ io.on("connection", (socket) => {
 
   socket.on("user-chat", async ({ from, id, message, profile, name, _id }) => {
     try {
-      let chat = { sender: from, message, profile, name };
-      console.log({ from, id, message, profile, name, _id });
+      let chat = { sender: from, message, profile, name, son: _id };
+
       let response = await GroupChat.updateOne(
         { _id: id, "chats._id": _id },
         { $push: { "chats.$.messages": chat } }
       );
+
       io.local.emit("user-chat", chat);
     } catch (errors) {
       console.log(errors);

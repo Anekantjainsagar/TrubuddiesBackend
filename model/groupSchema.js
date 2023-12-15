@@ -35,6 +35,7 @@ const groupSchema = new mongoose.Schema({
             type: Date,
             default: Date.now,
           },
+          son: String,
         },
       ],
     },
