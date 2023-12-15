@@ -148,8 +148,7 @@ io.on("connection", (socket) => {
         { _id: id, "chats._id": _id },
         { $push: { "chats.$.messages": chat } }
       );
-      console.log(response);
-      io.local.emit("chat", chat);
+      io.local.emit("user-chat", chat);
     } catch (errors) {
       console.log(errors);
     }
