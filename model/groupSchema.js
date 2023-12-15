@@ -6,6 +6,7 @@ const groupSchema = new mongoose.Schema({
   chats: [
     {
       profile: String,
+      name: String,
       sender: {
         type: mongoose.Types.ObjectId,
         require: true,
@@ -18,6 +19,24 @@ const groupSchema = new mongoose.Schema({
         type: Date,
         default: Date.now,
       },
+      messages: [
+        {
+          profile: String,
+          name: String,
+          sender: {
+            type: mongoose.Types.ObjectId,
+            require: true,
+          },
+          message: {
+            type: String,
+            require: true,
+          },
+          time: {
+            type: Date,
+            default: Date.now,
+          },
+        },
+      ],
     },
   ],
 });

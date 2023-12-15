@@ -130,14 +130,29 @@ app.get("/", (req, res) => {
 io.on("connection", (socket) => {
   console.log(`Connected`);
 
-  socket.on("chat", async ({ from, id, message, profile }) => {
+  socket.on("chat", async ({ from, id, message, profile, name }) => {
     try {
-      let chat = { sender: from, message, profile };
+      let chat = { sender: from, message, profile, name };
       let response = await GroupChat.updateOne(
         { _id: id },
         { $push: { chats: chat } }
       );
       console.log(response.modifiedCount);
+      io.local.emit("chat", chat);
+    } catch (errors) {
+      console.log(errors);
+    }
+  });
+
+  socket.on("user-chat", async ({ from, id, message, profile, name, _id }) => {
+    try {
+      let chat = { sender: from, message, profile, name };
+
+      let response = await GroupChat.updateOne(
+        { _id: id, "chats._id": _id },
+        { $push: { "chats.$.messages": chat } }
+      );
+
       io.local.emit("chat", chat);
     } catch (errors) {
       console.log(errors);
