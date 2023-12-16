@@ -60,7 +60,7 @@ trubuddy.post("/login", async (req, res) => {
 });
 
 trubuddy.get("/get/:id", async (req, res) => {
-  const user = await Trubuddy.findOne({_id:req.params.id});
+  const user = await Trubuddy.findOne({ _id: req.params.id });
   res.send(user);
 });
 
@@ -116,6 +116,7 @@ trubuddy.post("/update", validateSingin, async (req, res) => {
       languages,
       bio,
       anonymous,
+      meeting_url,
     } = req.body;
 
     let response = await Trubuddy.updateOne(
@@ -132,6 +133,7 @@ trubuddy.post("/update", validateSingin, async (req, res) => {
         languages,
         anonymous,
         personality,
+        meeting_url,
       }
     );
     res.status(200).send(response);

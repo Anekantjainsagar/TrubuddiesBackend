@@ -43,6 +43,7 @@ const trubuddySchema = new mongoose.Schema({
   },
   buddies: Array,
   bio: String,
+  meeting_url: String,
 });
 
 const Trubuddy = mongoose.model("Trubuddy", trubuddySchema);
