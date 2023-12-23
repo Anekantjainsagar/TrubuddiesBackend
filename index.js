@@ -19,16 +19,17 @@ const Trubuddy = require("./model/trubuddySchema");
 const User = require("./model/userSchema");
 const nodemailer = require("nodemailer");
 
-const passport = require("passport");
-const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const session = require("express-session");
+const passport = require("passport");
+const OAuth2Strategy = require("passport-google-oauth2").Strategy;
 
-const options = {
-  key: fs.readFileSync("/home/ubuntu/ssl/privkey1.pem"),
-  cert: fs.readFileSync("/home/ubuntu/ssl/fullchain1.pem"),
-};
+// const options = {
+//   key: fs.readFileSync("/home/ubuntu/ssl/privkey1.pem"),
+//   cert: fs.readFileSync("/home/ubuntu/ssl/fullchain1.pem"),
+// };
 
-const server = https.createServer(options, app);
+const server = https.createServer(app);
+// const server = https.createServer(options, app);
 const io = require("socket.io")(server, {
   pingInterval: 10000, // how often to ping/pong.
   pingTimeout: 30000,
@@ -39,43 +40,54 @@ const io = require("socket.io")(server, {
 
 app.use(
   cors({
-    origin: ["http://localhost:3000", "https://trubuddies.com"], // Update with the actual origin of your frontend
+    origin: "http://localhost:3000",
+    methods: "GET,POST,PUT,DELETE",
     credentials: true,
   })
 );
-
 app.use(express.json());
+
+app.use(
+  session({
+    secret: process.env.SECRET_KEY,
+    resave: false,
+    saveUninitialized: true,
+  })
+);
+app.use(passport.initialize());
+app.use(passport.session());
 
 connect();
 
 passport.use(
-  new GoogleStrategy(
+  new OAuth2Strategy(
     {
       clientID: process.env.CLIENT_ID,
       clientSecret: process.env.CLIENT_SECRET_ID,
-      callbackURL: "https://trubuddies.com:5000/auth/google/callback",
-      proxy: true, // Add this line
+      callbackURL: "http://trubuddies:5000/auth/google/callback",
+      scope: ["profile", "email"],
     },
     async (accessToken, refreshToken, profile, done) => {
-      // Check if the user already exists in the database
-      const existingUser = await User.findOne({ googleId: profile.id });
+      try {
+        let user = await User.findOne({ googleId: profile.id });
 
-      if (existingUser) {
-        return done(null, existingUser);
+        if (!user) {
+          user = new User({
+            googleId: profile.id,
+            name: profile.displayName,
+            email: profile.emails[0].value,
+          });
+
+          await user.save();
+        }
+
+        return done(null, user);
+      } catch (error) {
+        return done(error, null);
       }
-
-      // Save the user to the database
-      const user = await new User({
-        googleId: profile.id,
-        name: profile.displayName,
-        email: profile.emails[0].value,
-      }).save();
-
-      return done(null, user);
     }
   )
 );
-
 passport.serializeUser((user, done) => {
   done(null, user);
 });
@@ -84,40 +96,36 @@ passport.deserializeUser((user, done) => {
   done(null, user);
 });
 
+// initial google ouath login
 app.get(
   "/auth/google",
-  cors(), // Apply cors middleware to this route
   passport.authenticate("google", { scope: ["profile", "email"] })
 );
 
 app.get(
   "/auth/google/callback",
-  cors(), // Apply cors middleware to this route
-  passport.authenticate("google", { failureRedirect: "/" }),
-  (req, res) => {
-    res.redirect("/");
-  }
-);
-
-app.get("/logout", (req, res) => {
-  req.logout();
-  res.redirect("/");
-});
-
-app.get("/", (req, res) => {
-  res.json({ user: req.user });
-});
-
-// Express middleware
-app.use(
-  session({
-    secret: process.env.SECRET_KEY,
-    resave: true,
-    saveUninitialized: true,
+  passport.authenticate("google", {
+    successRedirect: "http://localhost:3000/user/dashboard",
+    failureRedirect: "http://localhost:3000/",
   })
 );
-app.use(passport.initialize());
-app.use(passport.session());
+
+app.get("/login/sucess", async (req, res) => {
+  if (req.user) {
+    res.status(200).json({ message: "user Login", user: req.user });
+  } else {
+    res.status(400).json({ message: "Not Authorized" });
+  }
+});
+
+app.get("/logout", (req, res, next) => {
+  req.logout(function (err) {
+    if (err) {
+      return next(err);
+    }
+    res.redirect("http://localhost:3000");
+  });
+});
 
 app.get("/", (req, res) => {
   res.send("Hello world");
@@ -228,6 +236,10 @@ app.use("/api/support", support);
 app.use("/api/chat", chat);
 app.use("/api/admin", admin);
 
-server.listen(process.env.PORT, () => {
+// server.listen(process.env.PORT, () => {
+//   console.log(`The Combined Server running at port ${process.env.PORT}`);
+// });
+
+app.listen(process.env.PORT, () => {
   console.log(`The Combined Server running at port ${process.env.PORT}`);
 });
