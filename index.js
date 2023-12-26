@@ -23,10 +23,10 @@ const session = require("express-session");
 const passport = require("passport");
 const OAuth2Strategy = require("passport-google-oauth2").Strategy;
 
-// const options = {
-//   key: fs.readFileSync("/home/ubuntu/ssl/privkey1.pem"),
-//   cert: fs.readFileSync("/home/ubuntu/ssl/fullchain1.pem"),
-// };
+const options = {
+  key: fs.readFileSync("/home/ubuntu/ssl/privkey1.pem"),
+  cert: fs.readFileSync("/home/ubuntu/ssl/fullchain1.pem"),
+};
 
 const server = https.createServer(app);
 // const server = https.createServer(options, app);
@@ -240,6 +240,6 @@ app.use("/api/admin", admin);
 //   console.log(`The Combined Server running at port ${process.env.PORT}`);
 // });
 
-app.listen(process.env.PORT, () => {
+server.listen(process.env.PORT, () => {
   console.log(`The Combined Server running at port ${process.env.PORT}`);
 });
