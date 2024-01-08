@@ -8,6 +8,7 @@ const Message = require("../../model/messageSchema");
 const Admin = require("../../model/adminSchema");
 const Social = require("../../model/socialSchema");
 const Faq = require("../../model/faqSchema");
+const Popup = require("../../model/popupSchema");
 
 const { validateSingin } = require("../../middlewares/auth");
 const jwt = require("jsonwebtoken");
@@ -113,6 +114,30 @@ admin.post("/get-social/:id", async (req, res) => {
   const response = await Social.findOne({ _id: id });
 
   res.status(200).send(response);
+});
+
+admin.post("/add-popup", async (req, res) => {
+  const { photo } = req.body;
+  const item = Popup({ photo });
+
+  item
+    .save()
+    .then((response) => {
+      res.send(response);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
+
+admin.get("/get-popup", async (req, res) => {
+  const response = await Popup.find();
+  res.send(response);
+});
+
+admin.post("/delete-popup/:id", async (req, res) => {
+  const response = await Popup.deleteOne({ _id: req.params.id });
+  res.send(response);
 });
 
 module.exports = admin;
