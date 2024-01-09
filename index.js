@@ -109,8 +109,8 @@ app.get("/logout", (req, res, next) => {
   });
 });
 
-const server = https.createServer(app);
-// const server = https.createServer(options, app);
+// const server = https.createServer(app);
+const server = https.createServer(options, app);
 const io = require("socket.io")(server, {
   pingInterval: 10000, // how often to ping/pong.
   pingTimeout: 30000,
