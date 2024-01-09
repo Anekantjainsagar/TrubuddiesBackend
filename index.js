@@ -19,7 +19,7 @@ const Trubuddy = require("./model/trubuddySchema");
 const User = require("./model/userSchema");
 const nodemailer = require("nodemailer");
 
-const cookieSessions = require("cookie-session");
+const session = require("express-session");
 const passport = require("passport");
 const OAuth2Strategy = require("passport-google-oauth2").Strategy;
 
@@ -46,10 +46,10 @@ app.use(
   })
 );
 app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Credentials", true);
-  res.header("Access-Control-Allow-Origin", "http://your-client-domain.com");
-  res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
-  res.header("Access-Control-Allow-Headers", "Content-Type");
+  res.header('Access-Control-Allow-Credentials', true);
+  res.header('Access-Control-Allow-Origin', 'http://your-client-domain.com');
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+  res.header('Access-Control-Allow-Headers', 'Content-Type');
   next();
 });
 
@@ -58,10 +58,10 @@ app.use(express.json());
 connect();
 
 app.use(
-  cookieSessions({
-    maxAge: 24 * 60 * 60 * 100,
-    name: "session",
-    keys: ["Anekantjainsagar"],
+  session({
+    secret: process.env.PASSWORD,
+    resave: false,
+    saveUninitialized: true,
   })
 );
 
