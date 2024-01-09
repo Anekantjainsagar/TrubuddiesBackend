@@ -28,6 +28,27 @@ const options = {
   cert: fs.readFileSync("/home/ubuntu/ssl/fullchain1.pem"),
 };
 
+// const server = https.createServer(app);
+const server = https.createServer(options, app);
+const io = require("socket.io")(server, {
+  pingInterval: 10000, // how often to ping/pong.
+  pingTimeout: 30000,
+  cors: {
+    origin: "*",
+  },
+});
+
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    methods: "GET,POST,PUT,DELETE",
+    credentials: true,
+  })
+);
+app.use(express.json());
+
+connect();
+
 app.use(
   session({
     secret: process.env.SECRET_KEY,
@@ -108,27 +129,6 @@ app.get("/logout", (req, res, next) => {
     res.redirect("http://localhost:3000");
   });
 });
-
-// const server = https.createServer(app);
-const server = https.createServer(options, app);
-const io = require("socket.io")(server, {
-  pingInterval: 10000, // how often to ping/pong.
-  pingTimeout: 30000,
-  cors: {
-    origin: "*",
-  },
-});
-
-app.use(
-  cors({
-    origin: "http://localhost:3000",
-    methods: "GET,POST,PUT,DELETE",
-    credentials: true,
-  })
-);
-app.use(express.json());
-
-connect();
 
 app.get("/", (req, res) => {
   res.send("Hello world");
