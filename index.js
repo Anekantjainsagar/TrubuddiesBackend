@@ -51,7 +51,7 @@ connect();
 
 app.use(
   session({
-    secret: process.env.SECRET_KEY,
+    secret: process.env.PASSWORD,
     resave: false,
     saveUninitialized: true,
   })
