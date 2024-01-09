@@ -117,7 +117,7 @@ app.get(
 app.get(
   "/auth/google/callback",
   passport.authenticate("google", {
-    successRedirect: "https://trubuddies.com/user/dashboard",
+    successRedirect: "https://trubuddies.com/user/trubuddies",
     failureRedirect: "https://trubuddies.com/",
   })
 );
