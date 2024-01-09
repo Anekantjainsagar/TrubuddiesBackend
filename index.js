@@ -19,7 +19,7 @@ const Trubuddy = require("./model/trubuddySchema");
 const User = require("./model/userSchema");
 const nodemailer = require("nodemailer");
 
-const session = require("express-session");
+const cookieSessions = require("cookie-session");
 const passport = require("passport");
 const OAuth2Strategy = require("passport-google-oauth2").Strategy;
 
@@ -50,10 +50,10 @@ app.use(express.json());
 connect();
 
 app.use(
-  session({
-    secret: process.env.PASSWORD,
-    resave: false,
-    saveUninitialized: true,
+  cookieSessions({
+    maxAge: 24 * 60 * 60 * 100,
+    name: "session",
+    keys: ["Anekantjainsagar"],
   })
 );
 
