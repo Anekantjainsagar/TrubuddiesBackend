@@ -41,7 +41,7 @@ const io = require("socket.io")(server, {
 
 app.use(
   cors({
-    origin: ["http://localhost:3000", "https://trubuddies.com:5000"],
+    origin: ["https://trubuddies.com", "https://trubuddies.com:5000"],
     methods: "GET,POST,PUT,DELETE",
     credentials: true,
   })
@@ -113,8 +113,8 @@ app.get(
 app.get(
   "/auth/google/callback",
   passport.authenticate("google", {
-    successRedirect: "http://localhost:3000/user/dashboard",
-    failureRedirect: "http://localhost:3000/",
+    successRedirect: "https://trubuddies.com/user/dashboard",
+    failureRedirect: "https://trubuddies.com/",
   })
 );
 
@@ -142,7 +142,7 @@ app.get("/logout", (req, res, next) => {
     if (err) {
       return next(err);
     }
-    res.redirect("http://localhost:3000");
+    res.redirect("https://trubuddies.com");
   });
 });
 
