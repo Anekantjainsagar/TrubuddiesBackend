@@ -55,7 +55,7 @@ app.use(
     resave: false,
     saveUninitialized: true,
     cookie: {
-      secure: process.env.NODE_ENV === "production", // Set to true in production
+      secure: true, // Set to true in production
       sameSite: "None",
     },
   })
