@@ -117,13 +117,12 @@ app.get(
 app.get(
   "/auth/google/callback",
   passport.authenticate("google", {
-    successRedirect: "https://trubuddies.com/user/trubuddies",
+    successRedirect: "https://trubuddies.com/trubuddies",
     failureRedirect: "https://trubuddies.com/",
   })
 );
 
 app.get("/login/sucess", async (req, res) => {
-  console.log(req.user);
   if (req.user) {
     const jwtToken = jwt.sign(
       {
@@ -141,7 +140,6 @@ app.get("/login/sucess", async (req, res) => {
 });
 
 app.get("/logout", (req, res, next) => {
-  console.log(req);
   req.logout(function (err) {
     if (err) {
       return next(err);
