@@ -136,7 +136,7 @@ app.get("/login/sucess", async (req, res) => {
     );
     res.status(200).json({ message: "user Login", user: req.user, jwtToken });
   } else {
-    res.status(400).json({ message: "Not Authorized" });
+    res.status(202).json({ message: "Not Authorized" });
   }
 });
 
