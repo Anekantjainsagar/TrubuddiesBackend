@@ -41,7 +41,7 @@ const io = require("socket.io")(server, {
 
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: ["http://localhost:3000", "https://trubuddies.com:5000"],
     methods: "GET,POST,PUT,DELETE",
     credentials: true,
   })
