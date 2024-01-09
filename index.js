@@ -28,25 +28,6 @@ const options = {
   cert: fs.readFileSync("/home/ubuntu/ssl/fullchain1.pem"),
 };
 
-const server = https.createServer(app);
-// const server = https.createServer(options, app);
-const io = require("socket.io")(server, {
-  pingInterval: 10000, // how often to ping/pong.
-  pingTimeout: 30000,
-  cors: {
-    origin: "*",
-  },
-});
-
-app.use(
-  cors({
-    origin: "http://localhost:3000",
-    methods: "GET,POST,PUT,DELETE",
-    credentials: true,
-  })
-);
-app.use(express.json());
-
 app.use(
   session({
     secret: process.env.SECRET_KEY,
@@ -54,17 +35,16 @@ app.use(
     saveUninitialized: true,
   })
 );
+
 app.use(passport.initialize());
 app.use(passport.session());
-
-connect();
 
 passport.use(
   new OAuth2Strategy(
     {
-      clientID: process.env.CLIENT_ID,
-      clientSecret: process.env.CLIENT_SECRET_ID,
-      callbackURL: "http://trubuddies:5000/auth/google/callback",
+      clientID: clientid,
+      clientSecret: clientsecret,
+      callbackURL: "/auth/google/callback",
       scope: ["profile", "email"],
     },
     async (accessToken, refreshToken, profile, done) => {
@@ -72,10 +52,11 @@ passport.use(
         let user = await User.findOne({ googleId: profile.id });
 
         if (!user) {
-          user = new User({
+          user = new userdb({
             googleId: profile.id,
             name: profile.displayName,
             email: profile.emails[0].value,
+            profile: profile.photos[0].value,
           });
 
           await user.save();
@@ -88,6 +69,7 @@ passport.use(
     }
   )
 );
+
 passport.serializeUser((user, done) => {
   done(null, user);
 });
@@ -126,6 +108,27 @@ app.get("/logout", (req, res, next) => {
     res.redirect("http://localhost:3000");
   });
 });
+
+const server = https.createServer(app);
+// const server = https.createServer(options, app);
+const io = require("socket.io")(server, {
+  pingInterval: 10000, // how often to ping/pong.
+  pingTimeout: 30000,
+  cors: {
+    origin: "*",
+  },
+});
+
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    methods: "GET,POST,PUT,DELETE",
+    credentials: true,
+  })
+);
+app.use(express.json());
+
+connect();
 
 app.get("/", (req, res) => {
   res.send("Hello world");
