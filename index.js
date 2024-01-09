@@ -18,6 +18,7 @@ const GroupChat = require("./model/groupSchema");
 const Trubuddy = require("./model/trubuddySchema");
 const User = require("./model/userSchema");
 const nodemailer = require("nodemailer");
+const jwt = require("jsonwebtoken");
 
 const session = require("express-session");
 const passport = require("passport");
