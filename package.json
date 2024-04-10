@@ -3,6 +3,8 @@
     "@types/passport-google-oauth2": "^0.1.8",
     "bcryptjs": "^2.4.3",
     "bull": "^4.11.5",
+    "cashfree-pg-sdk-nodejs": "^2.0.2",
+    "cashfree-sdk": "^0.1.1",
     "cookie-session": "^2.0.0",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",

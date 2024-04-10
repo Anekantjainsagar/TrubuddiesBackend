@@ -19,6 +19,7 @@ const Trubuddy = require("./model/trubuddySchema");
 const User = require("./model/userSchema");
 const nodemailer = require("nodemailer");
 const jwt = require("jsonwebtoken");
+const tokens = require("./Routes/User/tokens");
 
 const session = require("express-session");
 const passport = require("passport");
@@ -254,6 +255,7 @@ io.on("connection", (socket) => {
 app.use("/api/trubuddy", trubuddy);
 app.use("/api/login", login);
 app.use("/api/support", support);
+app.use("/api/token", tokens);
 app.use("/api/chat", chat);
 app.use("/api/admin", admin);
 

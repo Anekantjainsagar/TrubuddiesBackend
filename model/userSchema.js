@@ -28,6 +28,11 @@ const userSchema = new mongoose.Schema({
   discussions: Array,
   trubuddies: Array,
   anonymous: String,
+  tokens: {
+    type: Number,
+    default: 0,
+  },
+  orders: Array,
 });
 
 const User = mongoose.model("Users", userSchema);
