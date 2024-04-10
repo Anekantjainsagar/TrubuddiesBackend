@@ -54,8 +54,8 @@ tokens.post("/place", async (req, res) => {
 });
 
 tokens.post("/payment", async (req, res) => {
-  const { order_id, user_id, amount } = req.body;
-  const pay = await Payment.findOne({ order_id });
+  const { order_id, amount } = req.body;
+  const pay = await Payment.findById(order_id);
 
   if (pay) {
     res.status(201).send("Invalid uri");
@@ -75,12 +75,12 @@ tokens.post("/payment", async (req, res) => {
         .then(async (response) => {
           if (response?.order_status === "PAID") {
             const update = await Payment.updateOne(
-              { _id: order_id },
-              { status: "NewOrder", payment_id: pay?._id }
+              { _id: pay?._id },
+              { status: "NewOrder" }
             );
             const update2 = await User.updateOne(
-              { _id: user_id },
-              { $push: { orders: order_id }, $inc: { tokens: amount } }
+              { _id: pay?.user_id },
+              { $push: { orders: pay?._id }, $inc: { tokens: amount } }
             );
             res
               .status(200)
