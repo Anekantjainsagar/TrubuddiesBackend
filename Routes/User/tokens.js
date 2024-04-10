@@ -97,4 +97,14 @@ tokens.post("/payment", async (req, res) => {
   }
 });
 
+tokens.get("/get/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const order = await Payment.findOne({ _id: id });
+    res.status(200).send(order);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
+
 module.exports = tokens;
