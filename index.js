@@ -152,7 +152,7 @@ app.get("/", (req, res) => {
 });
 
 io.on("connection", (socket) => {
-  console.log(`Connected`);
+  // console.log(`Connected`);
 
   socket.on("chat", async ({ from, id, message, profile, name }) => {
     try {
@@ -184,11 +184,9 @@ io.on("connection", (socket) => {
   });
 
   socket.on("join", ({ userId }) => {
-    console.log(`${userId} User Joined`);
+    // console.log(`${userId} User Joined`);
     socket.join(userId);
   });
-
-  // socket.on("admin-message", async ({ from, to, message }) => {});
 
   socket.on("message", async ({ from, to, message }) => {
     try {
@@ -246,7 +244,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("disconnect", () => {
-    console.log(`Disconnected`);
+    // console.log(`Disconnected`);
   });
 });
 

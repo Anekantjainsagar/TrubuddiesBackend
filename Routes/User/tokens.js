@@ -17,6 +17,8 @@ tokens.post("/place", async (req, res) => {
   });
 
   console.log(order);
+  console.log(process.env.PAYMENT_SECRET_ID);
+  console.log(process.env.PAYMENT_CLIENT_ID);
   order
     .save()
     .then((resp) => {
@@ -34,7 +36,6 @@ tokens.post("/place", async (req, res) => {
               customer_phone: "123456789",
             },
             order_meta: {
-              //   return_url: `https://trubuddies.com/pay/{order_id}`,
               return_url: `http://localhost:3000/pay/{order_id}`,
             },
           },
@@ -45,6 +46,7 @@ tokens.post("/place", async (req, res) => {
           }
         )
         .then(async ({ data }) => {
+          console.log(data);
           const update = await User.updateOne(
             { _id: user_id },
             { $inc: { tokens: amount }, $push: { orders: order?._id } }
