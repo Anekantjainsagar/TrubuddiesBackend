@@ -16,14 +16,11 @@ tokens.post("/place", async (req, res) => {
     amount: parseInt(amount),
   });
 
-  const update = await User.updateOne(
-    { _id: user_id },
-    { $inc: { tokens: amount }, $push: { orders: order?._id } }
-  );
-
+  console.log(order);
   order
     .save()
     .then((resp) => {
+      console.log("resp");
       sdk
         .createOrder(
           {
@@ -46,7 +43,11 @@ tokens.post("/place", async (req, res) => {
             "x-api-version": "2022-09-01",
           }
         )
-        .then(({ data }) => {
+        .then(async ({ data }) => {
+          const update = await User.updateOne(
+            { _id: user_id },
+            { $inc: { tokens: amount }, $push: { orders: order?._id } }
+          );
           res.status(200).send({ ...data, order: order?._id });
         })
         .catch((err) => {

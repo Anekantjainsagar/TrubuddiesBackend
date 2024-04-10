@@ -16,9 +16,7 @@ const admin = require("./Routes/Admin/admin");
 const tokens = require("./Routes/User/tokens");
 const Message = require("./model/messageSchema");
 const GroupChat = require("./model/groupSchema");
-const Trubuddy = require("./model/trubuddySchema");
 const User = require("./model/userSchema");
-const nodemailer = require("nodemailer");
 const jwt = require("jsonwebtoken");
 
 const session = require("express-session");
