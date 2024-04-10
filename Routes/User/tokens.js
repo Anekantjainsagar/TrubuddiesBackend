@@ -33,7 +33,7 @@ tokens.post("/place", async (req, res) => {
               customer_phone: "+919090407368",
             },
             order_meta: {
-              return_url: `http://localhost:3000/pay/{order_id}`,
+              return_url: `https://trubuddies.com/pay/{order_id}`,
             },
           },
           {
