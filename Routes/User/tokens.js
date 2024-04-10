@@ -14,6 +14,7 @@ tokens.post("/place", async (req, res) => {
     user_id,
     tokens: parseInt(amount),
     amount: parseInt(amount),
+    status: "PaymentFailed",
   });
 
   order
