@@ -51,6 +51,7 @@ tokens.post("/place", async (req, res) => {
           res.status(200).send({ ...data, order: order?._id });
         })
         .catch((err) => {
+          console.log(err);
           res.status(500).send(err.message);
         });
     })
