@@ -59,7 +59,7 @@ tokens.post("/payment", async (req, res) => {
   const pay = await Payment.findOne({ _id: order_id });
   console.log(pay);
 
-  if (!pay?._id) { 
+  if (!pay?._id) {
     res.status(201).send("Invalid uri");
   } else {
     try {
@@ -82,7 +82,7 @@ tokens.post("/payment", async (req, res) => {
             );
             const update2 = await User.updateOne(
               { _id: pay?.user_id },
-              { $push: { orders: pay?._id }, $inc: { tokens: amount } }
+              { $push: { orders: { id: pay?._id } }, $inc: { tokens: amount } }
             );
             res
               .status(200)
