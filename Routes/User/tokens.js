@@ -57,7 +57,7 @@ tokens.post("/payment", async (req, res) => {
   const { order_id, amount } = req.body;
   const pay = await Payment.findById(order_id);
 
-  if (pay) {
+  if (pay?._id) {
     res.status(201).send("Invalid uri");
   } else {
     try {
