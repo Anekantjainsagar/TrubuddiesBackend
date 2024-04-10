@@ -15,7 +15,6 @@ tokens.post("/place", async (req, res) => {
     tokens: parseInt(amount),
     amount: parseInt(amount),
   });
-  let id = order?._id;
 
   order
     .save()
@@ -43,11 +42,7 @@ tokens.post("/place", async (req, res) => {
           }
         )
         .then(async ({ data }) => {
-          const update = await User.updateOne(
-            { _id: user_id },
-            { $push: { orders: id }, $inc: { tokens: amount } }
-          );
-          res.status(200).send({ ...data, update, order: order?._id });
+          res.status(200).send({ ...data, order: order?._id });
         })
         .catch((err) => {
           res.status(500).send(err);
@@ -59,7 +54,7 @@ tokens.post("/place", async (req, res) => {
 });
 
 tokens.post("/payment", async (req, res) => {
-  const { order_id } = req.body;
+  const { order_id, user_id, amount } = req.body;
   const pay = await Payment.findOne({ order_id });
 
   if (pay) {
@@ -83,7 +78,13 @@ tokens.post("/payment", async (req, res) => {
               { _id: order_id },
               { status: "NewOrder", payment_id: pay?._id }
             );
-            res.status(200).send("This order is paid!");
+            const update2 = await User.updateOne(
+              { _id: user_id },
+              { $push: { orders: order_id }, $inc: { tokens: amount } }
+            );
+            res
+              .status(200)
+              .send({ msg: "This order is paid!", update, update2 });
           } else {
             res.status(203).send("Order has not been paid!");
           }
