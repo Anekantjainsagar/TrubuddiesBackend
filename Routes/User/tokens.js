@@ -3,7 +3,7 @@ const sdk = require("api")("@cashfreedocs-new/v3#3oi9ke2mljzm0bo0");
 const Payment = require("../../model/paymentSchema");
 const User = require("../../model/userSchema");
 
-order.post("/place", async (req, res) => {
+tokens.post("/place", async (req, res) => {
   //   sdk.server("https://api.cashfree.com/pg");
   sdk.server("https://sandbox.cashfree.com/pg");
 
@@ -58,8 +58,8 @@ order.post("/place", async (req, res) => {
     });
 });
 
-order.post("/payment", async (req, res) => {
-  const { order_id } = req.body;    
+tokens.post("/payment", async (req, res) => {
+  const { order_id } = req.body;
   const pay = await Payment.findOne({ order_id });
 
   if (pay) {

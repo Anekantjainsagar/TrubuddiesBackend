@@ -13,21 +13,21 @@ const support = require("./Routes/User/support");
 const trubuddy = require("./Routes/trubuddy");
 const chat = require("./Routes/Chat/chat");
 const admin = require("./Routes/Admin/admin");
+const tokens = require("./Routes/User/tokens");
 const Message = require("./model/messageSchema");
 const GroupChat = require("./model/groupSchema");
 const Trubuddy = require("./model/trubuddySchema");
 const User = require("./model/userSchema");
 const nodemailer = require("nodemailer");
 const jwt = require("jsonwebtoken");
-const tokens = require("./Routes/User/tokens");
 
 const session = require("express-session");
 const passport = require("passport");
 const OAuth2Strategy = require("passport-google-oauth2").Strategy;
 
 const options = {
-  key: fs.readFileSync("/home/ubuntu/ssl/privkey1.pem"),
-  cert: fs.readFileSync("/home/ubuntu/ssl/fullchain1.pem"),
+  key: fs.readFileSync("/home/ubuntu/ssl/trubuddies.com/privkey4.pem"),
+  cert: fs.readFileSync("/home/ubuntu/ssl/trubuddies.com/fullchain4.pem"),
 };
 
 // const server = https.createServer(app);
