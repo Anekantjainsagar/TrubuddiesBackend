@@ -78,8 +78,18 @@ exports.signInUser = async (req, res) => {
 exports.getUser = async (req, res) => {
   const { id } = req;
 
-  let user = await Login.findById(id);
-  res.send(user);
+  try {
+    let user = await Login.findById(id).populate("orders.id"); // Populate the 'orders' field
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    res.json(user);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 };
 
 exports.updateUser = async (req, res) => {
