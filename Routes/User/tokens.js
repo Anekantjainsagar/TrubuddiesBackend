@@ -55,7 +55,8 @@ tokens.post("/place", async (req, res) => {
 
 tokens.post("/payment", async (req, res) => {
   const { order_id, amount } = req.body;
-  const pay = await Payment.findById(order_id);
+  console.log(order_id);
+  const pay = await Payment.findOne({ _id: order_id });
 
   if (pay?._id) {
     res.status(201).send("Invalid uri");
