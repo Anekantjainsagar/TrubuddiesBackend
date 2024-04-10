@@ -16,13 +16,9 @@ tokens.post("/place", async (req, res) => {
     amount: parseInt(amount),
   });
 
-  console.log(order);
-  console.log(process.env.PAYMENT_SECRET_ID);
-  console.log(process.env.PAYMENT_CLIENT_ID);
   order
     .save()
     .then((resp) => {
-      console.log("resp");
       sdk
         .createOrder(
           {
@@ -46,7 +42,6 @@ tokens.post("/place", async (req, res) => {
           }
         )
         .then(async ({ data }) => {
-          console.log(data);
           const update = await User.updateOne(
             { _id: user_id },
             { $inc: { tokens: amount }, $push: { orders: order?._id } }
@@ -54,7 +49,6 @@ tokens.post("/place", async (req, res) => {
           res.status(200).send({ ...data, order: order?._id });
         })
         .catch((err) => {
-          console.log(err);
           res.status(500).send(err);
         });
     })
@@ -102,7 +96,7 @@ tokens.post("/payment", async (req, res) => {
   }
 });
 
-tokens.get("/get/:id", async (req, res) => {
+tokens.post("/get/:id", async (req, res) => {
   const { id } = req.params;
   try {
     const order = await Payment.findOne({ _id: id });

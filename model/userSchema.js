@@ -32,7 +32,7 @@ const userSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
-  orders: Array,
+  orders: [{ id: { type: mongoose.Schema.Types.ObjectId, ref: "Payments" } }],
 });
 
 const User = mongoose.model("Users", userSchema);
