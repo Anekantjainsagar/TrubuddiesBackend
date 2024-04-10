@@ -15,6 +15,7 @@ tokens.post("/place", async (req, res) => {
     tokens: parseInt(amount),
     amount: parseInt(amount),
   });
+  let id = order?._id;
 
   order
     .save()
@@ -44,9 +45,9 @@ tokens.post("/place", async (req, res) => {
         .then(async ({ data }) => {
           const update = await User.updateOne(
             { _id: user_id },
-            { $inc: { tokens: amount }, $push: { orders: order?._id } }
+            { $push: { orders: id }, $inc: { tokens: amount } }
           );
-          res.status(200).send({ ...data, order: order?._id });
+          res.status(200).send({ ...data, update, order: order?._id });
         })
         .catch((err) => {
           res.status(500).send(err);
