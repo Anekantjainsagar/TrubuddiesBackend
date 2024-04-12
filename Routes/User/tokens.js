@@ -30,7 +30,7 @@ tokens.post("/place", async (req, res) => {
               customer_id: Date.now().toString().slice(0, 40),
               customer_name: user?.name,
               customer_email: user?.email,
-              customer_phone: "",
+              customer_phone: "+917692045606",
             },
             order_meta: {
               return_url: `https://trubuddies.com/pay/{order_id}`,
