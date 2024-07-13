@@ -28,7 +28,7 @@ const options = {
   cert: fs.readFileSync("/home/ubuntu/ssl/trubuddies.com/fullchain4.pem"),
 };
 
-// const server = https.createServer(app);
+// const server = http.createServer(app);
 const server = https.createServer(options, app);
 const io = require("socket.io")(server, {
   pingInterval: 10000, // how often to ping/pong.
@@ -254,10 +254,6 @@ app.use("/api/support", support);
 app.use("/api/token", tokens);
 app.use("/api/chat", chat);
 app.use("/api/admin", admin);
-
-// server.listen(process.env.PORT, () => {
-//   console.log(`The Combined Server running at port ${process.env.PORT}`);
-// });
 
 server.listen(process.env.PORT, () => {
   console.log(`The Combined Server running at port ${process.env.PORT}`);

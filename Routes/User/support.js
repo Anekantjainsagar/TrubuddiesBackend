@@ -19,6 +19,16 @@ support.post("/", (req, res) => {
     });
 });
 
+support.get("/", async (req, res) => {
+  const data = await Support.find();
+  res.send(data);
+});
+
+support.get("/get-query", async (req, res) => {
+  const data = await Query.find();
+  res.send(data);
+});
+
 support.post("/query", (req, res) => {
   const { name, email, phone, message } = req.body;
 
@@ -27,7 +37,7 @@ support.post("/query", (req, res) => {
   supportUs
     .save()
     .then((result) => {
-      res.status(200).send({ success: true });
+      res.status(200).send({ result });
     })
     .catch((err) => {
       res.status(500).send("Internal server error");

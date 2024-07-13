@@ -50,12 +50,26 @@ admin.post("/add-faq", async (req, res) => {
   });
 });
 
+admin.post("/update-faq", async (req, res) => {
+  const { id, question, answer } = req.body;
+
+  response = await Faq.updateOne({ _id: id }, { question, answer });
+  res.send(response);
+});
+
 admin.post("/get-faqs", async (req, res) => {
   const { question } = req.body;
 
   const response = await Faq.find({
     question: { $regex: new RegExp(question, "i") },
   });
+  res.send(response);
+});
+
+admin.post("/delete-faq", async (req, res) => {
+  const { id } = req.body;
+
+  const response = await Faq.deleteOne({ _id: id });
   res.send(response);
 });
 
