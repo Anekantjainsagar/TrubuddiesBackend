@@ -19,6 +19,8 @@ const GroupChat = require("./model/groupSchema");
 const User = require("./model/userSchema");
 const jwt = require("jsonwebtoken");
 
+const services = require("./Routes/services");
+
 const session = require("express-session");
 const passport = require("passport");
 const OAuth2Strategy = require("passport-google-oauth2").Strategy;
@@ -252,6 +254,7 @@ io.on("connection", (socket) => {
 
 app.use("/api/trubuddy", trubuddy);
 app.use("/api/login", login);
+app.use("/api/services", services);
 app.use("/api/support", support);
 app.use("/api/token", tokens);
 app.use("/api/chat", chat);
