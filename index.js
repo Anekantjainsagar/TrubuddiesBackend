@@ -26,9 +26,9 @@ const passport = require("passport");
 const OAuth2Strategy = require("passport-google-oauth2").Strategy;
 
 const options = {
-  key: fs.readFileSync("/etc/letsencrypt/archive/trubuddies.com/privkey5.pem"),
+  key: fs.readFileSync("/etc/letsencrypt/archive/trubuddies.com/privkey6.pem"),
   cert: fs.readFileSync(
-    "/etc/letsencrypt/archive/trubuddies.com/fullchain5.pem"
+    "/etc/letsencrypt/archive/trubuddies.com/fullchain6.pem"
   ),
 };
 
